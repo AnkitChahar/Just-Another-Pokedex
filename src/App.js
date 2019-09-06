@@ -20,17 +20,19 @@ function App() {
   }, []);
 
   let firstRequest = async (state) => {
-    for(let i=1;i<7;i++){
+    for(let i=1;i<10;i++){
       let tempVar = {};
       await axios.get('https://pokeapi.co/api/v2/pokemon/' + i).then(response => {
         tempVar.id = i;
         tempVar.name = response.data.name;
-      }).then(axios.get('https://pokeapi.co/api/v2/pokemon-form/' + i).then(response => {
         tempVar.img = response.data.sprites.front_default;
+        tempVar.type = response.data.types[response.data.types.length - 1].type.name;
+      }).then(axios.get("https://pokeapi.co/api/v2/pokemon-species/"+i).then(response => {
+        tempVar.desc = response.data.flavor_text_entries[1].flavor_text;
+        tempVar.color = response.data.color.name;
         state.pokemons.push(tempVar);
       }));
     }
-    console.log ('All requests done');
     setPokemonState(state);
   };
 
@@ -38,14 +40,18 @@ function App() {
     <div>
       {
         pokemonState.pokemons.map((pokemon) => {
-          return <Pokemon name={pokemon.name} mainImage={pokemon.img} key={pokemon.id}/>
+          return <Pokemon name={pokemon.name} mainImage={pokemon.img} key={pokemon.id} type={pokemon.type} desc={pokemon.desc} color={pokemon.color}/>
         })
       }
     </div>
   );
 
+  let mainStyle = {
+    overflow: 'scroll'
+  };
+
   return (
-    <div>
+    <div style={mainStyle}>
       {pokemonDiv}
     </div>
   );

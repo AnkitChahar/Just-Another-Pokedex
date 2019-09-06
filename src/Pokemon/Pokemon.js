@@ -1,38 +1,52 @@
 import React from 'react';
 import Flippy, { FrontSide, BackSide } from 'react-flippy';
 
-function Pokemon(props) { // name ,mainImage
+function Pokemon(props) { // name ,mainImage, type, desc
 
     let mainCardStyle = {
         width: 'fit-content',
         height: 'fit-content',
         margin: '0 auto',
-        marginTop: '10px',
+        marginTop: '5px',
+        marginBottom: '5px',
         borderRadius: '8px'
     }
 
-    let cardStyle = {
-        width: 'auto',
-        height: 'auto',
+    let frontCardStyle = {
+        width: '132px',
+        height: '189px',
+        border: '2px solid black',
+        borderRadius: '8px',
+        textTransform: 'capitalize',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    };
+
+    let backCardStyle = {
+        width: '132px',
+        height: '189px',
         border: '2px solid black',
         borderRadius: '8px',
         textTransform: 'capitalize',
         fontWeight: 'bold',
         textAlign: 'center',
+        overflow: 'none | scroll',
+        backgroundColor: props.color,
+        color: 'white'
     };
 
     return(
         <Flippy flipOnHover={false} flipOnClick={true} flipDirection="horizontal" style={mainCardStyle}>
-            <FrontSide style={cardStyle}>
+            <FrontSide style={frontCardStyle}>
             <div>
                 <p>{props.name}</p>
                 <img src={props.mainImage} alt={props.name}/>
             </div>
             </FrontSide>
-            <BackSide style={cardStyle}>
+            <BackSide style={backCardStyle}>
             <div>
-                <p>{props.name}</p>
-                <img src={props.mainImage} alt={props.name}/>
+                <p>{props.type}</p>
+                {/* <p>{props.desc}</p> */}
             </div>
             </BackSide>
         </Flippy>
