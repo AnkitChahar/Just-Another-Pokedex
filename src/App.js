@@ -3,6 +3,8 @@ import './App.css';
 import Pokemon from './Pokemon/Pokemon';
 import axios from 'axios';
 
+
+
 function App() {
 
   const[pokemonState, setPokemonState] = useState({
@@ -13,33 +15,30 @@ function App() {
     let tempState = {
       pokemons: []
     };
-
-    let Promises = [];
-
-    for(let i = 1; i < 7; i++)
-    {
-      Promises.push(axios.get('https://pokeapi.co/api/v2/pokemon/' + i).then(response => {
-        let tempVar = {}; 
-        tempVar.id = i;
-        tempVar.name = response.data.name;
-        Promises.push(axios.get('https://pokeapi.co/api/v2/pokemon-form/' + i).then(response2 => {
-          tempVar.img = response2.data.sprites.front_default;
-          tempState.pokemons.push(tempVar)
-        }));
-      }));
-
-    }
-    Promise.all(Promises).then(() => {
-      setPokemonState(tempState);
-    });
+    
+    firstRequest(tempState);
 
   }, []);
+
+  let firstRequest = async (state) => {
+    for(let i=1;i<7;i++){
+      let tempVar = {};
+      await axios.get('https://pokeapi.co/api/v2/pokemon/' + i).then(response => {
+        tempVar.id = i;
+        tempVar.name = response.data.name;
+      }).then(axios.get('https://pokeapi.co/api/v2/pokemon-form/' + i).then(response => {
+        tempVar.img = response.data.sprites.front_default;
+        state.pokemons.push(tempVar);
+      }));
+    }
+    console.log ('All requests done');
+    setPokemonState(state);
+  };
 
   let pokemonDiv = (
     <div>
       {
         pokemonState.pokemons.map((pokemon) => {
-          console.log(pokemonState.pokemons.length)
           return <Pokemon name={pokemon.name} mainImage={pokemon.img} key={pokemon.id}/>
         })
       }
