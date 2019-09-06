@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import './App.css';
 import Pokemon from './Pokemon/Pokemon';
 import axios from 'axios';
 
@@ -15,7 +14,7 @@ function App() {
     let tempState = {
       pokemons: []
     };
-    
+
     firstRequest(tempState);
 
   }, []);
@@ -46,7 +45,7 @@ function App() {
   );
 
   return (
-    <div className="App">
+    <div>
       {pokemonDiv}
     </div>
   );
