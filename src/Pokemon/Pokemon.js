@@ -7,7 +7,7 @@ function Pokemon(props) { // name ,mainImage
     return(
         <div>
             <p style={style}>{props.name}</p>
-            <img src={props.mainImage} alt="Loading..."/>
+            <img src={props.mainImage} alt={props.name}/>
         </div>
     );
 }
