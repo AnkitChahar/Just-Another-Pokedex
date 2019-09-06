@@ -22,7 +22,7 @@ function Pokemon(props) { // name ,mainImage
     };
 
     return(
-        <Flippy flipOnHover={true} flipOnClick={false} flipDirection="horizontal" style={mainCardStyle}>
+        <Flippy flipOnHover={false} flipOnClick={true} flipDirection="horizontal" style={mainCardStyle}>
             <FrontSide style={cardStyle}>
             <div>
                 <p>{props.name}</p>
