@@ -5,7 +5,15 @@ function Pokemon(props) {
   // name ,mainImage, type, desc, gen
 
   const textColorValue = color => {
-    const isWhite = ["green", "red", "blue", "brown", "purple", "gray"];
+    const isWhite = [
+      "green",
+      "red",
+      "blue",
+      "brown",
+      "purple",
+      "gray",
+      "black"
+    ];
     return isWhite.indexOf(color) !== -1 ? "white" : "black";
   };
 
@@ -50,8 +58,9 @@ function Pokemon(props) {
       <BackSide style={backCardStyle}>
         <div>
           <p>ID - {props.num}</p>
+          <p>Name - {props.name}</p>
           <p>Type - {props.type}</p>
-          <p>Generation - {props.gen}</p>
+          <p style={{ textTransform: "uppercase" }}>Generation - {props.gen}</p>
         </div>
       </BackSide>
     </Flippy>
