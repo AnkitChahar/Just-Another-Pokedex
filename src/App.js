@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import Pokemon from './Pokemon/Pokemon';
 import axios from 'axios';
-
-
+import {Grid, Container} from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
+import './App.css'
 
 function App() {
 
@@ -14,13 +15,11 @@ function App() {
     let tempState = {
       pokemons: []
     };
-
-    firstRequest(tempState);
-
+    firstRequest(tempState, 59);
   }, []);
 
-  let firstRequest = async (state) => {
-    for(let i=1;i<10;i++){
+  let firstRequest = async (state, numOfPokemon) => {
+    for(let i=1;i<=numOfPokemon;i++){
       let tempVar = {};
       await axios.get('https://pokeapi.co/api/v2/pokemon/' + i).then(response => {
         tempVar.id = i;
@@ -37,23 +36,23 @@ function App() {
   };
 
   let pokemonDiv = (
-    <div>
+    <Grid relaxed columns={6}>
       {
-        pokemonState.pokemons.map((pokemon) => {
-          return <Pokemon name={pokemon.name} mainImage={pokemon.img} key={pokemon.id} type={pokemon.type} desc={pokemon.desc} color={pokemon.color}/>
+        pokemonState.pokemons.map((pokemon, index) => {
+          return (
+            <Grid.Column key={pokemon.id}>
+              <Pokemon name={pokemon.name} mainImage={pokemon.img} type={pokemon.type} desc={pokemon.desc} color={pokemon.color} num={index + 1} />
+            </Grid.Column>
+          );
         })
       }
-    </div>
+    </Grid>
   );
 
-  let mainStyle = {
-    overflow: 'scroll'
-  };
-
   return (
-    <div style={mainStyle}>
+    <Container className="GridStyle">
       {pokemonDiv}
-    </div>
+    </Container>
   );
 }
 

@@ -4,17 +4,15 @@ import Flippy, { FrontSide, BackSide } from 'react-flippy';
 function Pokemon(props) { // name ,mainImage, type, desc
 
     let mainCardStyle = {
-        width: 'fit-content',
-        height: 'fit-content',
-        margin: '0 auto',
+        // margin: '0 auto',
         marginTop: '5px',
         marginBottom: '5px',
         borderRadius: '8px'
     }
 
     let frontCardStyle = {
-        width: '132px',
-        height: '189px',
+        // width: '132px',
+        // height: '189px',
         border: '2px solid black',
         borderRadius: '8px',
         textTransform: 'capitalize',
@@ -23,8 +21,8 @@ function Pokemon(props) { // name ,mainImage, type, desc
     };
 
     let backCardStyle = {
-        width: '132px',
-        height: '189px',
+        // width: '132px',
+        // height: '189px',
         border: '2px solid black',
         borderRadius: '8px',
         textTransform: 'capitalize',
@@ -45,8 +43,8 @@ function Pokemon(props) { // name ,mainImage, type, desc
             </FrontSide>
             <BackSide style={backCardStyle}>
             <div>
+                <p>{props.num}</p>
                 <p>{props.type}</p>
-                {/* <p>{props.desc}</p> */}
             </div>
             </BackSide>
         </Flippy>
