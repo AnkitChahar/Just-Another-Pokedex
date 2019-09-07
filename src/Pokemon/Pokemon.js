@@ -3,16 +3,13 @@ import Flippy, { FrontSide, BackSide } from 'react-flippy';
 
 function Pokemon(props) { // name ,mainImage, type, desc
 
-    let mainCardStyle = {
-        // margin: '0 auto',
+    const mainCardStyle = {
         marginTop: '5px',
         marginBottom: '5px',
         borderRadius: '8px'
     }
 
-    let frontCardStyle = {
-        // width: '132px',
-        // height: '189px',
+    const frontCardStyle = {
         border: '2px solid black',
         borderRadius: '8px',
         textTransform: 'capitalize',
@@ -20,9 +17,7 @@ function Pokemon(props) { // name ,mainImage, type, desc
         textAlign: 'center'
     };
 
-    let backCardStyle = {
-        // width: '132px',
-        // height: '189px',
+    const backCardStyle = {
         border: '2px solid black',
         borderRadius: '8px',
         textTransform: 'capitalize',
