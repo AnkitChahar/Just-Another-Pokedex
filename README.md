@@ -11,6 +11,7 @@ To-Do :-
 - [x] Create a Grid of Pokémon Cards ([Semantic-UI-React](https://react.semantic-ui.com/collections/grid/))
 - [x] Sequentially fetch data so that cards load one by one rather than all at once
 - [x] Add Infinite Scroll so that new data is fetched when scrolled down (Needs to be refined)
+- [ ] Shift to cached API of PokéApi
 - [ ] Add a Title Bar
 - [ ] Add a Github link to this repository on the title bar
 - [ ] Open a side information panel when clicked on 'More Details' about the Pokémon
