@@ -60,7 +60,7 @@ function Pokemon(props) {
           <p>ID - {props.num}</p>
           <p>Name - {props.name}</p>
           <p>Type - {props.type}</p>
-          <p style={{ textTransform: "uppercase" }}>Generation - {props.gen}</p>
+          <p>Generation - {props.gen.toUpperCase()}</p>
         </div>
       </BackSide>
     </Flippy>
