@@ -20,7 +20,7 @@ function App() {
     offset: 0
   });
 
-  let isLast = false;
+  let isLastPage = false;
 
   useEffect(() => {
     requestPokemon();
@@ -36,13 +36,13 @@ function App() {
       pokemonArray = response.results;
       if (response.next == null) {
         setHasMoreState(false);
-        isLast = true;
+        isLastPage = true;
       }
-      await processPokemonArray(pokemonArray, isLast);
+      await processPokemonArray(pokemonArray);
     });
   };
 
-  const processPokemonArray = async (pokemonArray, isLast) => {
+  const processPokemonArray = async pokemonArray => {
     setHasMoreState(false);
     let tempState = [...pokemonState.pokemons];
     for (let i = 0; i < pokemonArray.length; i++) {
@@ -87,7 +87,7 @@ function App() {
         pokemons: tempState
       });
       console.log("Loaded ID - ", tempPokemonObject.id);
-      if (i === pokemonArray.length - 1 && !isLast) {
+      if (i === pokemonArray.length - 1 && !isLastPage) {
         setHasMoreState(true);
       }
     }
@@ -123,7 +123,7 @@ function App() {
         style={{ overflow: "none" }}
       >
         <Container>{pokemonDiv}</Container>
-        <Loader inline="centered" active={!hasMoreState && !isLast}>
+        <Loader inline="centered" active={!hasMoreState && !isLastPage}>
           Loading
         </Loader>
       </InfiniteScroll>
