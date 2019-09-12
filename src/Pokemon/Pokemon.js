@@ -1,5 +1,6 @@
 import React from "react";
 import Flippy, { FrontSide, BackSide } from "react-flippy";
+import defaultImage from "../default.png";
 
 function Pokemon(props) {
   // name ,mainImage, type, desc, gen
@@ -28,7 +29,10 @@ function Pokemon(props) {
     borderRadius: "8px",
     textTransform: "capitalize",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    backgroundColor: "white",
+    width: "164px",
+    height: "197px"
   };
 
   const backCardStyle = {
@@ -39,7 +43,9 @@ function Pokemon(props) {
     textAlign: "center",
     overflow: "none | scroll",
     backgroundColor: props.color,
-    color: textColorValue(props.color)
+    color: textColorValue(props.color),
+    width: "164px",
+    height: "197px"
   };
 
   return (
@@ -53,7 +59,7 @@ function Pokemon(props) {
         <div>
           <p>{props.name}</p>
           <img
-            src={props.mainImage}
+            src={props.mainImage ? props.mainImage : defaultImage}
             alt={props.name}
             style={{ width: "128px", height: "128px" }}
           />

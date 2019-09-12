@@ -1,4 +1,5 @@
 .GridStyle {
   margin: 10px;
-  width: auto;
+  width: fit-content;
+  left: 0px;
 }

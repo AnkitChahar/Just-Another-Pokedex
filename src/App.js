@@ -24,10 +24,10 @@ function App() {
     requestPokemon();
   }, []);
 
-  const requestPokemon = async () => {
+  const requestPokemon = () => {
     let pokemonArray = null;
     let isLast = false;
-    await Pokedex.getPokemonsList(nextInterval).then(response => {
+    Pokedex.getPokemonsList(nextInterval).then(async response => {
       setNextInterval({
         limit: 50,
         offset: nextInterval.offset + 50
@@ -37,57 +37,62 @@ function App() {
         setHasMoreState(false);
         isLast = true;
       }
+      await processPokemonArray(pokemonArray, isLast);
     });
-
-    processPokemonArray(pokemonArray, isLast);
   };
 
-  const processPokemonArray = (pokemonArray, isLast) => {
+  const processPokemonArray = async (pokemonArray, isLast) => {
     setHasMoreState(false);
     let tempState = [...pokemonState.pokemons];
-    pokemonArray.forEach(async (pokemon, index) => {
+    for (let i = 0; i < pokemonArray.length; i++) {
       let tempPokemonObject = {};
+      let pokemon = pokemonArray[i];
       tempPokemonObject.name = pokemon.name;
       let speciesName = null;
-      await Pokedex.getPokemonByName(pokemon.name)
-        .then(response => {
-          tempPokemonObject.img = response.sprites.front_default;
-          tempPokemonObject.type =
-            response.types[response.types.length - 1].type.name;
-          tempPokemonObject.id = response.id;
-          speciesName = response.species.name;
-        })
-        .catch(() => {
-          console.log("Request Failed for ", pokemon.name);
-        });
-      await Pokedex.getPokemonSpeciesByName(speciesName)
-        .then(response => {
-          tempPokemonObject.color = response.color.name;
-          tempPokemonObject.gen = response.generation.name.split("-")[1];
-          tempPokemonObject.desc =
-            response.flavor_text_entries[
-              response.flavor_text_entries.findIndex(
-                text => text.language.name === "en"
-              )
-            ].flavor_text;
-        })
-        .then(() => {
-          tempState.push(tempPokemonObject);
-          setPokemonState({
-            pokemons: tempState
-          });
-          if (index === pokemonArray.length - 1 && !isLast) {
-            setHasMoreState(true);
-          }
-        })
-        .catch(() => {
-          console.log("Request Failed for ", pokemon.name);
-        });
-    });
+      let requestArray = [];
+      requestArray.push(
+        Pokedex.getPokemonByName(pokemon.name)
+          .then(response => {
+            tempPokemonObject.img = response.sprites.front_default;
+            tempPokemonObject.type =
+              response.types[response.types.length - 1].type.name;
+            tempPokemonObject.id = response.id;
+            speciesName = response.species.name;
+          })
+          .catch(() => {
+            console.log("First Request Failed for ", pokemon.name);
+          })
+      );
+      await Promise.all(requestArray);
+      requestArray.push(
+        Pokedex.getPokemonSpeciesByName(speciesName)
+          .then(response => {
+            tempPokemonObject.color = response.color.name;
+            tempPokemonObject.gen = response.generation.name.split("-")[1];
+            tempPokemonObject.desc =
+              response.flavor_text_entries[
+                response.flavor_text_entries.findIndex(
+                  text => text.language.name === "en"
+                )
+              ].flavor_text;
+          })
+          .catch(() => {
+            console.log("Second Request Failed for ", pokemon.name);
+          })
+      );
+      await Promise.all(requestArray);
+      tempState.push(tempPokemonObject);
+      setPokemonState({
+        pokemons: tempState
+      });
+      if (i === pokemonArray.length - 1 && !isLast) {
+        setHasMoreState(true);
+      }
+    }
   };
 
   let pokemonDiv = (
-    <Grid stackable columns={6}>
+    <Grid doubling columns={6}>
       {pokemonState.pokemons.map(pokemon => {
         return (
           <Grid.Column key={pokemon.id}>
@@ -107,17 +112,13 @@ function App() {
   );
 
   return (
-    <div className="GridStyle" id="mainGrid">
+    <div className="GridStyle">
       <InfiniteScroll
         dataLength={pokemonState.pokemons.length}
         next={requestPokemon}
         hasMore={hasMoreState}
         loader={<h4 style={{ textAlign: "center" }}>Loading...</h4>}
-        endMessage={
-          <p style={{ textAlign: "center" }}>
-            <b>Yay! You have seen it all</b>
-          </p>
-        }
+        style={{ overflow: "none" }}
       >
         <Container>{pokemonDiv}</Container>
       </InfiniteScroll>
