@@ -86,6 +86,7 @@ function App() {
       setPokemonState({
         pokemons: tempState
       });
+      console.log("Loaded ID - ", tempPokemonObject.id);
       if (i === pokemonArray.length - 1 && !isLast) {
         setHasMoreState(true);
       }

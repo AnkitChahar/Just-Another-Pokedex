@@ -3,8 +3,6 @@ import Flippy, { FrontSide, BackSide } from "react-flippy";
 import defaultImage from "../default.png";
 
 function Pokemon(props) {
-  // name ,mainImage, type, desc, gen
-
   const textColorValue = color => {
     const isWhite = [
       "green",
@@ -32,7 +30,8 @@ function Pokemon(props) {
     textAlign: "center",
     backgroundColor: "white",
     width: "164px",
-    height: "197px"
+    height: "197px",
+    overflow: "none"
   };
 
   const backCardStyle = {
@@ -41,7 +40,7 @@ function Pokemon(props) {
     textTransform: "capitalize",
     fontWeight: "bold",
     textAlign: "center",
-    overflow: "none | scroll",
+    overflow: "none",
     backgroundColor: props.color,
     color: textColorValue(props.color),
     width: "164px",
@@ -57,7 +56,15 @@ function Pokemon(props) {
     >
       <FrontSide style={frontCardStyle}>
         <div>
-          <p>{props.name}</p>
+          <p
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}
+          >
+            {props.name}
+          </p>
           <img
             src={props.mainImage ? props.mainImage : defaultImage}
             alt={props.name}
