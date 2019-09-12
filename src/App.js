@@ -71,16 +71,18 @@ function App() {
               )
             ].flavor_text;
         })
+        .then(() => {
+          tempState.push(tempPokemonObject);
+          setPokemonState({
+            pokemons: tempState
+          });
+          if (index === pokemonArray.length - 1 && !isLast) {
+            setHasMoreState(true);
+          }
+        })
         .catch(() => {
           console.log("Request Failed for ", pokemon.name);
         });
-      tempState.push(tempPokemonObject);
-      setPokemonState({
-        pokemons: tempState
-      });
-      if (index === pokemonArray.length - 1 && !isLast) {
-        setHasMoreState(true);
-      }
     });
   };
 
