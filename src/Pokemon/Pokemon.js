@@ -52,7 +52,11 @@ function Pokemon(props) {
       <FrontSide style={frontCardStyle}>
         <div>
           <p>{props.name}</p>
-          <img src={props.mainImage} alt={props.name} />
+          <img
+            src={props.mainImage}
+            alt={props.name}
+            style={{ width: "128px", height: "128px" }}
+          />
         </div>
       </FrontSide>
       <BackSide style={backCardStyle}>

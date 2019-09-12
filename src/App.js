@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Pokemon from "./Pokemon/Pokemon";
-import axios from "axios";
 import { Grid, Container } from "semantic-ui-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
+
+const P = require("pokeapi-js-wrapper");
+const Pokedex = new P.Pokedex();
 
 function App() {
   const [pokemonState, setPokemonState] = useState({
@@ -13,118 +15,78 @@ function App() {
 
   const [hasMoreState, setHasMoreState] = useState(true);
 
-  const [nextPageLink, setNextPageLink] = useState(
-    "https://pokeapi.co/api/v2/pokemon?offset=40&limit=20"
-  );
+  const [nextInterval, setNextInterval] = useState({
+    limit: 50,
+    offset: 0
+  });
 
   useEffect(() => {
-    requestFirstPokemons();
+    requestPokemon();
   }, []);
 
-  const requestFirstPokemons = () => {
-    axios
-      .get("https://pokeapi.co/api/v2/pokemon?offset=0&limit=40")
-      .then(async response => {
-        setNextPageLink("https://pokeapi.co/api/v2/pokemon?offset=40&limit=20");
-      })
-      .then(async () => {
-        const offset = pokemonState.pokemons.length;
-        const startPoint = offset + 1;
-        const endPoint = offset + 40;
-        let tempState = [...pokemonState.pokemons];
-        for (let id = startPoint; id < endPoint; id++) {
-          let tempVar = {};
-          let requestArray = [];
-          requestArray.push(
-            axios
-              .get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-              .then(response => {
-                tempVar.id = id;
-                tempVar.name = response.data.name;
-                tempVar.img = response.data.sprites.front_default;
-                tempVar.type =
-                  response.data.types[response.data.types.length - 1].type.name;
-              })
-          );
-          requestArray.push(
-            axios
-              .get(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
-              .then(response => {
-                tempVar.desc =
-                  response.data.flavor_text_entries[
-                    response.data.flavor_text_entries.findIndex(
-                      text => text.language.name === "en"
-                    )
-                  ].flavor_text;
-                tempVar.color = response.data.color.name;
-                tempVar.gen = response.data.generation.name.split("-")[1];
-              })
-          );
-          await Promise.all(requestArray);
-          tempState.push(tempVar);
-          setPokemonState({
-            pokemons: tempState
-          });
-        }
+  const requestPokemon = async () => {
+    let pokemonArray = null;
+    let isLast = false;
+    await Pokedex.getPokemonsList(nextInterval).then(response => {
+      setNextInterval({
+        limit: 50,
+        offset: nextInterval.offset + 50
       });
+      pokemonArray = response.results;
+      if (response.next == null) {
+        setHasMoreState(false);
+        isLast = true;
+      }
+    });
+
+    processPokemonArray(pokemonArray, isLast);
   };
 
-  const requestPokemon = () => {
-    const baseURL = nextPageLink;
-    axios
-      .get(baseURL)
-      .then(async response => {
-        if (response.data.next) {
-          setNextPageLink(response.data.next);
-        } else {
-          setHasMoreState(false);
-        }
-      })
-      .then(async () => {
-        const offset = pokemonState.pokemons.length;
-        const startPoint = offset + 1;
-        const endPoint = offset + 20;
-        let tempState = [...pokemonState.pokemons];
-        for (let id = startPoint; id < endPoint; id++) {
-          let tempVar = {};
-          let requestArray = [];
-          requestArray.push(
-            axios
-              .get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-              .then(response => {
-                tempVar.id = id;
-                tempVar.name = response.data.name;
-                tempVar.img = response.data.sprites.front_default;
-                tempVar.type =
-                  response.data.types[response.data.types.length - 1].type.name;
-              })
-          );
-          requestArray.push(
-            axios
-              .get(`https://pokeapi.co/api/v2/pokemon-species/${id}`)
-              .then(response => {
-                tempVar.desc =
-                  response.data.flavor_text_entries[
-                    response.data.flavor_text_entries.findIndex(
-                      text => text.language.name === "en"
-                    )
-                  ].flavor_text;
-                tempVar.color = response.data.color.name;
-                tempVar.gen = response.data.generation.name.split("-")[1];
-              })
-          );
-          await Promise.all(requestArray);
-          tempState.push(tempVar);
-          setPokemonState({
-            pokemons: tempState
-          });
-        }
+  const processPokemonArray = (pokemonArray, isLast) => {
+    setHasMoreState(false);
+    let tempState = [...pokemonState.pokemons];
+    pokemonArray.forEach(async (pokemon, index) => {
+      let tempPokemonObject = {};
+      tempPokemonObject.name = pokemon.name;
+      let speciesName = null;
+      await Pokedex.getPokemonByName(pokemon.name)
+        .then(response => {
+          tempPokemonObject.img = response.sprites.front_default;
+          tempPokemonObject.type =
+            response.types[response.types.length - 1].type.name;
+          tempPokemonObject.id = response.id;
+          speciesName = response.species.name;
+        })
+        .catch(() => {
+          console.log("Request Failed for ", pokemon.name);
+        });
+      await Pokedex.getPokemonSpeciesByName(speciesName)
+        .then(response => {
+          tempPokemonObject.color = response.color.name;
+          tempPokemonObject.gen = response.generation.name.split("-")[1];
+          tempPokemonObject.desc =
+            response.flavor_text_entries[
+              response.flavor_text_entries.findIndex(
+                text => text.language.name === "en"
+              )
+            ].flavor_text;
+        })
+        .catch(() => {
+          console.log("Request Failed for ", pokemon.name);
+        });
+      tempState.push(tempPokemonObject);
+      setPokemonState({
+        pokemons: tempState
       });
+      if (index === pokemonArray.length - 1 && !isLast) {
+        setHasMoreState(true);
+      }
+    });
   };
 
   let pokemonDiv = (
     <Grid stackable columns={6}>
-      {pokemonState.pokemons.map((pokemon, index) => {
+      {pokemonState.pokemons.map(pokemon => {
         return (
           <Grid.Column key={pokemon.id}>
             <Pokemon
@@ -133,7 +95,7 @@ function App() {
               type={pokemon.type}
               desc={pokemon.desc}
               color={pokemon.color}
-              num={index + 1}
+              num={pokemon.id}
               gen={pokemon.gen}
             />
           </Grid.Column>
@@ -143,21 +105,21 @@ function App() {
   );
 
   return (
-    <InfiniteScroll
-      dataLength={pokemonState.pokemons.length}
-      next={requestPokemon}
-      hasMore={hasMoreState}
-      loader={<h4>Loading...</h4>}
-      endMessage={
-        <p style={{ textAlign: "center" }}>
-          <b>Yay! You have seen it all</b>
-        </p>
-      }
-    >
-      <div className="GridStyle">
+    <div className="GridStyle" id="mainGrid">
+      <InfiniteScroll
+        dataLength={pokemonState.pokemons.length}
+        next={requestPokemon}
+        hasMore={hasMoreState}
+        loader={<h4 style={{ textAlign: "center" }}>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
         <Container>{pokemonDiv}</Container>
-      </div>
-    </InfiniteScroll>
+      </InfiniteScroll>
+    </div>
   );
 }
 
