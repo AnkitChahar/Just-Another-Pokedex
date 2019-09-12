@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Pokemon from "./Pokemon/Pokemon";
-import { Grid, Container } from "semantic-ui-react";
+import { Grid, Container, Loader } from "semantic-ui-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "semantic-ui-css/semantic.min.css";
 import "./App.css";
@@ -20,13 +20,14 @@ function App() {
     offset: 0
   });
 
+  let isLast = false;
+
   useEffect(() => {
     requestPokemon();
   }, []);
 
   const requestPokemon = () => {
     let pokemonArray = null;
-    let isLast = false;
     Pokedex.getPokemonsList(nextInterval).then(async response => {
       setNextInterval({
         limit: 50,
@@ -121,6 +122,9 @@ function App() {
         style={{ overflow: "none" }}
       >
         <Container>{pokemonDiv}</Container>
+        <Loader inline="centered" active={!hasMoreState && !isLast}>
+          Loading
+        </Loader>
       </InfiniteScroll>
     </div>
   );
