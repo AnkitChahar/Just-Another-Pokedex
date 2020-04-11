@@ -1,50 +1,50 @@
-import React from "react";
-import Flippy, { FrontSide, BackSide } from "react-flippy";
-import defaultImage from "../default.png";
+import React from 'react';
+import Flippy, { FrontSide, BackSide } from 'react-flippy';
+import defaultImage from '../default.png';
 
 function Pokemon(props) {
-  const textColorValue = color => {
+  const textColorValue = (color) => {
     const isWhite = [
-      "green",
-      "red",
-      "blue",
-      "brown",
-      "purple",
-      "gray",
-      "black"
+      'green',
+      'red',
+      'blue',
+      'brown',
+      'purple',
+      'gray',
+      'black',
     ];
-    return isWhite.indexOf(color) !== -1 ? "white" : "black";
+    return isWhite.indexOf(color) !== -1 ? 'white' : 'black';
   };
 
   const mainCardStyle = {
-    marginTop: "5px",
-    marginBottom: "5px",
-    borderRadius: "8px"
+    marginTop: '5px',
+    marginBottom: '5px',
+    borderRadius: '8px',
   };
 
   const frontCardStyle = {
-    border: "2px solid black",
-    borderRadius: "8px",
-    textTransform: "capitalize",
-    fontWeight: "bold",
-    textAlign: "center",
-    backgroundColor: "white",
-    width: "164px",
-    height: "197px",
-    overflow: "none"
+    border: '2px solid black',
+    borderRadius: '8px',
+    textTransform: 'capitalize',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    width: '164px',
+    height: '197px',
+    overflow: 'none',
   };
 
   const backCardStyle = {
-    border: "2px solid black",
-    borderRadius: "8px",
-    textTransform: "capitalize",
-    fontWeight: "bold",
-    textAlign: "center",
-    overflow: "none",
+    border: '2px solid black',
+    borderRadius: '8px',
+    textTransform: 'capitalize',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    overflow: 'none',
     backgroundColor: props.color,
     color: textColorValue(props.color),
-    width: "164px",
-    height: "197px"
+    width: '164px',
+    height: '197px',
   };
 
   return (
@@ -58,9 +58,9 @@ function Pokemon(props) {
         <div>
           <p
             style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {props.name}
@@ -68,7 +68,10 @@ function Pokemon(props) {
           <img
             src={props.mainImage ? props.mainImage : defaultImage}
             alt={props.name}
-            style={{ width: "128px", height: "128px" }}
+            style={{
+              width: '128px',
+              height: '128px',
+            }}
           />
         </div>
       </FrontSide>
